@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Architecture — VoltaEdge Algo</title>
+<link rel="icon" href="assets/voltaedge-mark.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/styles.css" />
+<link rel="stylesheet" href="assets/site.css" />
+<style>
+  .doc { max-width: 900px; margin: 0 auto; padding: 0 var(--gutter); }
+  .doc-hero { padding: 160px 0 60px; }
+  .doc-hero .back {
+    font-family: var(--font-mono);
+    font-size: 12px; color: var(--text-3); letter-spacing: 0.05em;
+    margin-bottom: 32px; display: inline-flex; gap: 8px; align-items: center;
+    transition: color .15s ease;
+  }
+  .doc-hero .back:hover { color: var(--volt); }
+  .doc h1 { font-size: clamp(40px, 5vw, 64px); letter-spacing: -0.035em; line-height: 1.0; margin-bottom: 20px; font-weight: 400; }
+  .doc .lede { font-size: 20px; color: var(--text-2); line-height: 1.5; max-width: 60ch; margin-bottom: 40px; }
+  .doc h2 { font-size: 28px; letter-spacing: -0.025em; margin: 60px 0 20px; font-weight: 500; }
+  .doc h3 { font-size: 16px; margin: 0 0 8px; font-weight: 500; color: var(--text); letter-spacing: -0.01em; }
+  .doc p { margin: 12px 0; color: var(--text-2); font-size: 16px; line-height: 1.65; }
+  .doc ul { margin: 12px 0 12px 20px; color: var(--text-2); font-size: 15.5px; line-height: 1.7; }
+  .doc li { margin: 4px 0; }
+  .doc code { font-family: var(--font-mono); font-size: 13px; background: var(--bg-2); padding: 2px 6px; border-radius: 4px; color: var(--volt); border: 1px solid var(--border); }
+
+  .svc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 32px 0;
+  }
+  .svc {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .svc .num {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--volt);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+  .svc p { font-size: 14px; color: var(--text-3); margin: 8px 0 0; line-height: 1.55; }
+
+  .flow-diagram {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 24px 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 2;
+    overflow-x: auto;
+  }
+  .flow-diagram .arrow { color: var(--volt); }
+  .flow-diagram .comp { color: var(--text); font-weight: 500; }
+
+  .doc-nav {
+    margin: 80px 0 0;
+    padding: 32px 0;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; gap: 20px;
+  }
+  .doc-nav a {
+    display: block; padding: 20px 24px;
+    background: var(--bg-1); border: 1px solid var(--border);
+    border-radius: 12px; flex: 1;
+    transition: border-color .15s;
+  }
+  .doc-nav a:hover { border-color: var(--volt); }
+  .doc-nav a .k { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-3); letter-spacing: 0.1em; margin-bottom: 6px; }
+  .doc-nav a .v { font-size: 15px; color: var(--text); }
+
+  @media (max-width: 700px) { .svc-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="nav-left">
+      <a href="index.html" class="nav-brand">
+        <span class="nav-brand-parent">datareco</span>
+        <span class="nav-brand-sep">/</span>
+        <span class="nav-brand-product">
+          <svg width="14" height="14" viewBox="0 0 32 32"><path d="M18 2L10 16H15L14 30L22 16H17L18 2Z" fill="#E5FF3A"/></svg>
+          VoltaEdge Algo
+        </span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <a href="index.html#engine">Signal engine</a>
+      <a href="index.html#lifecycle">How it works</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="index.html#risk">Risk</a>
+      <a href="index.html#roadmap">Status</a>
+    </div>
+    <div class="nav-cta">
+      <a href="index.html#contact" class="btn btn-primary">Book a demo <span class="btn-arrow">→</span></a>
+    </div>
+  </div>
+</nav>
+
+<section class="doc-hero">
+  <div class="doc">
+    <a class="back" href="index.html">← Back to overview</a>
+    <span class="eyebrow">Deep dive · 02</span>
+    <h1 style="margin-top: 20px;">System architecture.</h1>
+    <p class="lede">
+      The platform is built as a set of independent, event-driven services, each
+      owning one responsibility and communicating over a message bus. Any one
+      piece can scale, fail, or be replaced without taking down the rest.
+    </p>
+  </div>
+</section>
+
+<div class="doc">
+
+  <h2>The nine services</h2>
+
+  <div class="svc-grid">
+    <div class="svc">
+      <div class="num">SVC 01 · GATEWAY</div>
+      <h3>Broker gateway</h3>
+      <p>The single, abstracted interface to every broker. Redundant adapters for Zerodha (primary), Upstox, Angel One, Interactive Brokers, Binance, and MetaTrader sit behind one stable contract.</p>
+    </div>
+    <div class="svc">
+      <div class="num">SVC 02 · DATA</div>
+      <h3>Data engine</h3>
+      <p>Ingests and normalises live market data and macro context into a canonical bar format the rest of the system consumes.</p>
+    </div>
+    <div class="svc">
+      <div class="num">SVC 03 · STRATEGY</div>
+      <h3>Strategy core</h3>
+      <p>Runs the two indicators on closed candles, applies confluence and macro filters, and emits immutable signal objects with entry, three take-profits, stop-loss, tier, and metadata.</p>
+    </div>
+    <div class="svc">
+      <div class="num">SVC 04 · RISK</div>
+      <h3>Risk engine</h3>
+      <p>Position sizing, portfolio and exposure limits, circuit breakers. Every signal in every mode passes through — no bypass exists.</p>
+    </div>
+    <div class="svc">
+      <div class="num">SVC 05 · EXECUTION</div>
+      <h3>Execution engine</h3>
+      <p>Order management, brackets, staged exits, trailing stops, P&amp;L reconciliation to the dollar cent. A full OMS with a strict order state machine.</p>
+    </div>
+    <div class="svc">
+      <div class="num">SVC 06 · ACCOUNTS</div>
+      <h3>Account manager</h3>
+      <p>Fans one approved signal out across every eligible account in parallel, scaling quantity per account and skipping accounts below minimum viable size.</p>
+    </div>
+    <div class="svc">
+      <div class="num">SVC 07 · CONTROL</div>
+      <h3>Dashboard API</h3>
+      <p>FastAPI control plane. WebSocket streaming for live views. Sensitive actions gated by RBAC and 2FA. Config changes take effect immediately.</p>
+    </div>
+    <div class="svc">
+      <div class="num">SVC 08 · ANALYTICS</div>
+      <h3>Analytics · continuous improvement</h3>
+      <p>Weekly performance job, A/B testing across accounts, loss-cluster feedback loop that promotes approved rules into the risk engine after human review.</p>
+    </div>
+    <div class="svc">
+      <div class="num">SVC 09 · PLUGINS</div>
+      <h3>Plugin host</h3>
+      <p>The extension point. New strategy modules load into a sandbox, run in shadow mode for a period, and only influence live trading after review.</p>
+    </div>
+  </div>
+
+  <h2>The trade path, in text</h2>
+  <p>The lifecycle is deterministic — the same candles and configuration always produce the same result.</p>
+
+  <div class="flow-diagram">
+    <div><span class="comp">MARKET DATA</span> <span class="arrow">→</span> <span class="comp">Data engine</span> · normalise</div>
+    <div><span class="arrow">→</span> <span class="comp">Strategy core</span> · MASTER + CDV PRO on closed candles</div>
+    <div><span class="arrow">→</span> confluence graded, tier assigned</div>
+    <div><span class="arrow">→</span> macro-bias + volatility-regime filter</div>
+    <div><span class="arrow">→</span> immutable <span class="comp">signal object</span> emitted</div>
+    <div><span class="arrow">→</span> <span class="comp">Risk engine</span> · sizing + limits + circuit breakers</div>
+    <div><span class="arrow">→</span> <span class="comp">Account manager</span> · fan-out, quantity scaled per capital</div>
+    <div><span class="arrow">→</span> <span class="comp">Execution engine</span> · bracket order + staged exits</div>
+    <div><span class="arrow">→</span> reconciled P&amp;L per account and consolidated</div>
+    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+      <span style="color: var(--down)">◉</span> at any point: <span class="comp" style="color: var(--down)">Kill switch</span> flattens all, halts all, awaits human restart.
+    </div>
+  </div>
+
+  <h2>The data plane</h2>
+  <ul>
+    <li><strong>PostgreSQL + TimescaleDB</strong> — the time-series store. Bars, signals, orders, fills, P&amp;L, config history.</li>
+    <li><strong>Redis</strong> — fast shared state for the hot path: live positions, per-account balances, in-flight order tracking.</li>
+    <li><strong>Kafka</strong> — the event bus. Every meaningful transition (signal fired, order placed, fill received, kill switch tripped) is an event.</li>
+  </ul>
+
+  <h2>Why event-driven</h2>
+  <p>
+    Because trading is inherently asynchronous. Data arrives when it arrives.
+    Fills come back on the broker's schedule. Kill-switch triggers can come from
+    Telegram at 2 a.m. Wiring services together with events instead of direct
+    calls means any consumer can drop, be redeployed, or scale independently
+    without stalling the pipeline — the events sit in the bus until someone
+    reads them.
+  </p>
+  <p>
+    It also gives us free replay. Rebuilding the state of the system at any
+    point is a matter of replaying the event log from a checkpoint. This is
+    what lets the analytics service run counterfactuals and shadow-mode
+    plugins score against the same events as production.
+  </p>
+
+  <h2>Configuration over code</h2>
+  <p>
+    Every strategy parameter, risk limit, and account setting lives in the
+    database, not hardcoded. Adding a broker account, changing a risk limit,
+    or deploying a new strategy version is a data change — not a code change
+    and redeploy.
+  </p>
+  <ul>
+    <li><strong>Strategy versioning</strong> — deploy a new version while the old keeps running. Canary it to one account. Roll back in one click.</li>
+    <li><strong>A/B testing</strong> — control and challenger parameter sets on different accounts, compared on win rate, net P&amp;L, Sharpe, drawdown, hold time.</li>
+    <li><strong>Feedback loop</strong> — losing trades clustered by entry condition; recurring loss patterns surface for human review; approved rules promote into the risk engine's filters.</li>
+  </ul>
+
+  <h2>The stack, in one paragraph</h2>
+  <p>
+    Python across the backend services with FastAPI for the control-plane API;
+    PostgreSQL with the TimescaleDB extension for time-series data; Redis for
+    shared state; Kafka for the event stream; React, TypeScript, and Tailwind
+    for the dashboard; Docker for packaging. Secrets are held in a managed
+    secret store (never in code or the database), access is role-controlled,
+    and sensitive actions require a second factor.
+  </p>
+
+  <h2>What runs where — path to production</h2>
+  <p>
+    The remaining work is not building — it's deployment. A lean single-region
+    setup to start: one Kubernetes cluster, one Postgres/Timescale instance
+    with hot-standby, a managed Redis, and a Kafka cluster sized for current
+    throughput with headroom. Real broker credentials in the secret store. Live
+    market-data feeds wired to the data engine. Then live-connect drills, a
+    fresh kill-switch drill, a confirmed go/no-go — and only then, small live
+    capital in semi-automatic on one account, one asset class.
+  </p>
+
+  <div class="doc-nav">
+    <a href="signal-engine.html">
+      <div class="k">← BACK</div>
+      <div class="v">Signal engine</div>
+    </a>
+    <a href="index.html">
+      <div class="k">HOME →</div>
+      <div class="v">Product overview</div>
+    </a>
+  </div>
+</div>
+
+<footer style="margin-top: 100px;">
+  <div class="wrap">
+    <div class="footer-bottom" style="border-top: 0; padding-top: 0;">
+      <div>© 2026 Datareco · VoltaEdge Algo</div>
+      <div><a href="mailto:support@datareco.com" style="color: var(--text-2);">support@datareco.com</a></div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

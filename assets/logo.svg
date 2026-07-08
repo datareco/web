@@ -1,0 +1,8 @@
+<svg width="120" height="24" viewBox="0 0 120 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Datareco mark: a stylized 'D' with a data-bar cutout -->
+  <path d="M2 3H10C15.5228 3 20 7.47715 20 13V11C20 16.5228 15.5228 21 10 21H2V3Z" stroke="currentColor" stroke-width="1.5"/>
+  <rect x="6" y="10" width="8" height="1.5" fill="currentColor"/>
+  <rect x="6" y="13" width="5" height="1.5" fill="currentColor"/>
+  <!-- Wordmark -->
+  <text x="27" y="16.5" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" letter-spacing="-0.02em" fill="currentColor">datareco</text>
+</svg>

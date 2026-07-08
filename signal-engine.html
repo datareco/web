@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The signal engine — VoltaEdge Algo</title>
+<link rel="icon" href="assets/voltaedge-mark.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/styles.css" />
+<link rel="stylesheet" href="assets/site.css" />
+<style>
+  .doc {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+  .doc-hero { padding: 160px 0 60px; }
+  .doc-hero .back {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-3);
+    letter-spacing: 0.05em;
+    margin-bottom: 32px;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    transition: color .15s ease;
+  }
+  .doc-hero .back:hover { color: var(--volt); }
+  .doc h1 { font-size: clamp(40px, 5vw, 64px); letter-spacing: -0.035em; line-height: 1.0; margin-bottom: 20px; font-weight: 400; }
+  .doc .lede {
+    font-size: 20px; color: var(--text-2); line-height: 1.5; max-width: 60ch;
+    margin-bottom: 40px;
+  }
+  .doc h2 {
+    font-size: 28px; letter-spacing: -0.025em;
+    margin: 60px 0 20px;
+    font-weight: 500;
+  }
+  .doc h3 {
+    font-size: 20px; letter-spacing: -0.02em;
+    margin: 40px 0 12px;
+    font-weight: 500;
+    color: var(--volt);
+  }
+  .doc p { margin: 12px 0; color: var(--text-2); font-size: 16px; line-height: 1.65; }
+  .doc ul { margin: 12px 0 12px 20px; color: var(--text-2); font-size: 16px; line-height: 1.7; }
+  .doc li { margin: 4px 0; }
+  .doc li strong { color: var(--text); font-weight: 500; }
+  .doc code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--bg-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--volt);
+    border: 1px solid var(--border);
+  }
+  .doc .callout {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--volt);
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin: 32px 0;
+  }
+  .doc .callout p { margin: 0; color: var(--text); font-size: 15px; }
+  .doc .callout p + p { margin-top: 10px; color: var(--text-2); }
+  .doc-nav {
+    margin: 80px 0 0;
+    padding: 32px 0;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; gap: 20px;
+  }
+  .doc-nav a {
+    display: block;
+    padding: 20px 24px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    flex: 1;
+    transition: border-color .15s;
+  }
+  .doc-nav a:hover { border-color: var(--volt); }
+  .doc-nav a .k { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-3); letter-spacing: 0.1em; margin-bottom: 6px; }
+  .doc-nav a .v { font-size: 15px; color: var(--text); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="nav-left">
+      <a href="index.html" class="nav-brand">
+        <span class="nav-brand-parent">datareco</span>
+        <span class="nav-brand-sep">/</span>
+        <span class="nav-brand-product">
+          <svg width="14" height="14" viewBox="0 0 32 32"><path d="M18 2L10 16H15L14 30L22 16H17L18 2Z" fill="#E5FF3A"/></svg>
+          VoltaEdge Algo
+        </span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <a href="index.html#engine">Signal engine</a>
+      <a href="index.html#lifecycle">How it works</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="index.html#risk">Risk</a>
+      <a href="index.html#roadmap">Status</a>
+    </div>
+    <div class="nav-cta">
+      <a href="index.html#contact" class="btn btn-primary">Book a demo <span class="btn-arrow">→</span></a>
+    </div>
+  </div>
+</nav>
+
+<section class="doc-hero">
+  <div class="doc">
+    <a class="back" href="index.html">← Back to overview</a>
+    <span class="eyebrow">Deep dive · 01</span>
+    <h1 style="margin-top: 20px;">The signal engine.</h1>
+    <p class="lede">
+      The intelligence of VoltaEdge Algo is two proprietary indicators, ported
+      to Python and validated against the author's live charts to within 0.5%
+      across five asset classes and roughly 20,000 candles each. Here is what
+      each actually does — and how they combine.
+    </p>
+  </div>
+</section>
+
+<div class="doc">
+
+  <h2>Design principle: agreement, not addition</h2>
+  <p>
+    Most signal frameworks blend indicators by summing weighted scores. VoltaEdge
+    treats them as answering two different questions and requires both to say
+    yes. MASTER answers <em>"is the technical structure aligned for a trade?"</em>
+    CDV PRO answers <em>"is order flow actually confirming it?"</em> A trade
+    without agreement doesn't fire.
+  </p>
+
+  <div class="callout">
+    <p><strong>Non-repainting, always.</strong></p>
+    <p>Signals compute only on closed candles. Once fired, a signal never changes retroactively. This is stricter than the TradingView source, which updates intrabar and can therefore repaint. We deliberately trade slightly more conservative timing for the guarantee that the system never acts on something that later vanishes.</p>
+  </div>
+
+  <h2>VoltaEdge MASTER — the confluence engine</h2>
+  <p>
+    A large multi-component system that combines many independent technical
+    signals into a single, graded decision. On top of the components sits an
+    adaptive market-condition engine that gates signals by an overall
+    market-condition score. The engine emits tiered signals — from
+    full-confluence high-conviction entries down to lighter setups — each
+    with three staged take-profit levels.
+  </p>
+
+  <h3>Trend &amp; structure</h3>
+  <ul>
+    <li><strong>Jurik moving average</strong> — a low-lag, low-noise trend line, less prone to whipsaw than EMA/SMA on volatile instruments.</li>
+    <li><strong>Moving-average stack + Gann HiLo trend filter</strong> — combined trend confirmation across multiple lookback windows.</li>
+    <li><strong>Dual-SuperTrend confirmation gate</strong> — two SuperTrends at different sensitivities; must agree.</li>
+    <li><strong>Multi-timeframe alignment layer</strong> — a signal only proceeds if higher-timeframe context concurs.</li>
+  </ul>
+
+  <h3>Volatility &amp; regime</h3>
+  <ul>
+    <li><strong>ATR-based volatility regime classifier</strong> — the system knows whether it's in a quiet, normal, or elevated regime and adjusts.</li>
+    <li><strong>Bollinger / Keltner squeeze detection</strong> — flags coiling markets primed for expansion.</li>
+    <li><strong>Adaptive market-condition score</strong> — a meta-gate that suppresses signals in unfavourable overall conditions.</li>
+  </ul>
+
+  <h3>Order flow &amp; price action</h3>
+  <ul>
+    <li><strong>Cumulative delta volume</strong> — participation-weighted directional pressure.</li>
+    <li><strong>VWAP</strong> — session-relative fair value.</li>
+    <li><strong>Regular &amp; hidden divergences</strong> — price vs. oscillator disagreement.</li>
+    <li><strong>Liquidity-sweep detection</strong> — flags stop hunts and false breakouts.</li>
+    <li><strong>Order blocks · fair-value gaps · CPR pivots</strong> — structural levels where reactions concentrate.</li>
+  </ul>
+
+  <h3>Signal tiers</h3>
+  <p>
+    Each signal comes with a tier and staged exits. A+ requires full confluence
+    across trend, regime, and order flow. A drops one requirement. B is a
+    lighter setup. The lowest "scalp" tier — which repaints by nature — is
+    <strong>disabled in live trading</strong>. Every signal carries three
+    take-profit levels (partials on the first two, a trailing final leg) plus a
+    hard stop-loss.
+  </p>
+
+  <div class="callout">
+    <p><strong>The trade-approval rule, in one line:</strong></p>
+    <p><code>MASTER = A+</code> &nbsp;<span class="txt-3">∧</span>&nbsp; <code>CDV ≥ 10</code> &nbsp;<span class="txt-3">∧</span>&nbsp; <code>Macro filter = pass</code> &nbsp;<span class="txt-3">→</span>&nbsp; <code style="color: var(--up)">EXECUTE</code></p>
+  </div>
+
+  <h2>CDV PRO — the order-flow engine</h2>
+  <p>
+    A cumulative-delta-volume system that reads the balance of buying versus
+    selling pressure bar by bar. It produces a weighted 0–20 order-flow score
+    with graded tiers, an exhaustion measure that flags when a move is running
+    out of participation, volatility bands, and several confirming oscillators.
+  </p>
+
+  <h3>What CDV actually measures</h3>
+  <p>
+    For each bar, the engine attributes traded volume to the buying side or the
+    selling side based on the direction of price change relative to the bar's
+    open and volume distribution. The cumulative sum of these signed volumes
+    over the session (or a rolling window) is the delta baseline. Divergences
+    between price and delta — price up on falling delta, or vice versa — flag
+    moves that lack participation and are candidates to fail.
+  </p>
+
+  <h3>Asset-adaptive by design</h3>
+  <p>
+    The engine's session reset points and score thresholds adjust to the
+    instrument being traded. Equities reset at cash open. Futures use their own
+    session. Crypto runs 24/7 with a rolling window. The score bands that
+    define "strong buying pressure" on BTCUSD are not the same as on
+    HDFCBANK — they are calibrated per asset, in configuration.
+  </p>
+
+  <h3>Exhaustion measure</h3>
+  <p>
+    A dedicated exhaustion score climbs as a directional move extends without
+    fresh participation. High exhaustion in the direction of an A+ MASTER
+    signal is a strong <em>no</em> — even a technically perfect setup will not
+    fire if the order-flow engine says the move is out of gas.
+  </p>
+
+  <h2>Parity validation</h2>
+  <p>
+    Every component of every indicator has been ported to Python and cross-checked
+    bar-for-bar against the author's live TradingView charts across five asset
+    classes, roughly 20 000 candles each. Every residual difference is documented
+    and explained (warm-up effects, data-source rounding, or intentional
+    non-repainting divergences). There are <strong>zero genuine mismatches</strong>.
+  </p>
+
+  <div class="callout">
+    <p><strong>Tolerance ≤ 0.5%</strong></p>
+    <p>Across the full validation set, no computed value deviates by more than 0.5% from the TradingView reference. The residual gap is almost entirely the non-repainting behaviour — the platform is deliberately using closed-candle values where TradingView is showing intrabar ones.</p>
+  </div>
+
+  <h2>What is not in the signal engine — yet</h2>
+  <p>
+    There is no machine-learning or AI model in the core system, and that is by
+    design. The intelligence is the two deterministic technical indicators.
+    What has been built is the <em>framework</em> to add AI later — a plugin
+    system with sandboxing and shadow-mode evaluation — but the actual AI
+    modules the original specification envisioned (a machine-learning signal
+    classifier, news-sentiment analysis, an order-flow-imbalance model) are
+    explicitly future scope. Hooks ready; models not built.
+  </p>
+
+  <div class="doc-nav">
+    <a href="index.html">
+      <div class="k">← BACK</div>
+      <div class="v">Product overview</div>
+    </a>
+    <a href="architecture.html">
+      <div class="k">NEXT →</div>
+      <div class="v">System architecture</div>
+    </a>
+  </div>
+</div>
+
+<footer style="margin-top: 100px;">
+  <div class="wrap">
+    <div class="footer-bottom" style="border-top: 0; padding-top: 0;">
+      <div>© 2026 Datareco · VoltaEdge Algo</div>
+      <div><a href="mailto:support@datareco.com" style="color: var(--text-2);">support@datareco.com</a></div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

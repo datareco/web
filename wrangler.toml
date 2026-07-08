@@ -1,0 +1,11 @@
+name = "datareco-contact"
+main = "workers/contact.js"
+compatibility_date = "2026-07-08"
+workers_dev = true
+account_id = "1786ca7566b9f02631b8a2a8f90ab6d8"
+
+[vars]
+AWS_REGION = "ap-south-1"
+SES_FROM_EMAIL = "noreply@datareco.tech"
+SES_TO_EMAIL = "support@datareco.tech"
+ALLOWED_ORIGINS = "https://datareco.tech,https://www.datareco.tech"

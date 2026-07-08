@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VoltaEdge Algo — Automated algorithmic trading, by Datareco</title>
+<meta name="description" content="A production automated trading platform. Two proprietary indicators, seven asset classes, six brokers, one operator cockpit — with an emergency kill switch that flattens every account in under three seconds." />
+<link rel="icon" href="assets/voltaedge-mark.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/styles.css" />
+<link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+
+<!-- =========================================================
+     NAV
+========================================================= -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="nav-left">
+      <a href="index.html" class="nav-brand">
+        <span class="nav-brand-parent">datareco</span>
+        <span class="nav-brand-sep">/</span>
+        <span class="nav-brand-product">
+          <svg width="14" height="14" viewBox="0 0 32 32" style="margin-right:2px"><path d="M18 2L10 16H15L14 30L22 16H17L18 2Z" fill="#E5FF3A"/></svg>
+          VoltaEdge Algo
+        </span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <a href="#engine">Signal engine</a>
+      <a href="#lifecycle">How it works</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#risk">Risk</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#roadmap">Status</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#contact" class="btn btn-ghost">Contact</a>
+      <a href="#contact" class="btn btn-primary">Book a demo <span class="btn-arrow">→</span></a>
+    </div>
+  </div>
+</nav>
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1 class="h-display">
+        Automated trading,<br />
+        <span class="accent">wired for capital</span>.
+      </h1>
+      <p class="body-lg hero-sub">
+        Two proprietary indicators. Seven asset classes. Six brokers.
+        One operator cockpit &mdash; with a kill switch that flattens
+        every position, in every account, in under three seconds.
+      </p>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn btn-primary">Book a demo <span class="btn-arrow">→</span></a>
+        <a href="#roadmap" class="btn btn-ghost">Request pilot access</a>
+      </div>
+
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <div class="k">Indicator parity</div>
+          <div class="v">≤ 0.5%</div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="k">Kill-switch time</div>
+          <div class="v">&lt; 3 s</div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="k">Backtest deviation</div>
+          <div class="v">$0.00</div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="k">Tests passing</div>
+          <div class="v">268/268</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-panel">
+      <div class="hp-head">
+        <div class="hp-head-left">
+          <div class="hp-dots">
+            <span class="hp-dot"></span>
+            <span class="hp-dot"></span>
+            <span class="hp-dot live"></span>
+          </div>
+          <span>voltaedge.exec / live.feed</span>
+        </div>
+        <span>live · consolidated</span>
+      </div>
+      <div class="hp-body">
+        <div id="pnl-feed" class="pnl-feed"></div>
+      </div>
+      <div class="hero-chart-wrap">
+        <canvas data-candles></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     TICKER
+========================================================= -->
+<div class="ticker" data-ticker></div>
+
+<!-- =========================================================
+     TRUST BAR
+========================================================= -->
+<div class="wrap">
+  <div class="trust">
+    <div class="trust-item">
+      <div class="n">≤ 0.5<span style="font-size:.6em">%</span></div>
+      <div class="l">Indicator parity vs. TradingView across five asset classes, ~20 000 candles each.</div>
+    </div>
+    <div class="trust-item">
+      <div class="n">&lt; 3<span style="font-size:.6em">s</span></div>
+      <div class="l">Emergency kill switch flattens every position across every account, tested.</div>
+    </div>
+    <div class="trust-item">
+      <div class="n">189</div>
+      <div class="l">Six-month backtest trades reconciled to the dollar cent — zero deviation from manual P&amp;L.</div>
+    </div>
+    <div class="trust-item">
+      <div class="n">268<span class="txt-3" style="font-size:.5em"> / 268</span></div>
+      <div class="l">Automated tests passing; clean under linting and static type-checking.</div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     SIGNAL ENGINE
+========================================================= -->
+<section class="section" id="engine">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <span class="eyebrow">01 · The signal engine</span>
+        <h2 class="h-section" style="margin-top:20px;">Two indicators.<br/>One agreement.</h2>
+        <p>
+          The intelligence of the platform is two proprietary indicators, ported to
+          Python and validated against live TradingView charts. One reads
+          <em>structure</em>. The other reads <em>order flow</em>. A trade requires
+          both to agree.
+        </p>
+      </div>
+      <a href="signal-engine.html" class="btn btn-ghost">Deep dive <span class="btn-arrow">→</span></a>
+    </div>
+
+    <div class="sig-grid">
+      <div class="sig-card">
+        <div class="sig-card-head">
+          <div>
+            <div class="sig-label">01 · Confluence</div>
+            <h3>VoltaEdge MASTER</h3>
+          </div>
+          <span class="sig-tag">non-repainting</span>
+        </div>
+        <div class="sig-card-body">
+          <p>
+            A multi-component confluence engine that combines many independent
+            technical signals into a single graded decision. Emits tiered signals
+            with three staged take-profits and an adaptive market-condition gate.
+          </p>
+          <div class="gauge" aria-label="Confluence score">
+            <span class="gauge-bar on"></span><span class="gauge-bar on"></span>
+            <span class="gauge-bar on"></span><span class="gauge-bar on"></span>
+            <span class="gauge-bar on"></span><span class="gauge-bar on"></span>
+            <span class="gauge-bar on"></span><span class="gauge-bar"></span>
+            <span class="gauge-bar"></span><span class="gauge-bar"></span>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:.06em;margin-bottom:14px;">
+            <span class="txt-volt">A+ TIER</span> · confluence 7/10 · trade approved
+          </div>
+          <div class="sig-components">
+            <span class="sig-comp">Jurik MA</span>
+            <span class="sig-comp">Gann HiLo</span>
+            <span class="sig-comp">ATR regime</span>
+            <span class="sig-comp">Squeeze</span>
+            <span class="sig-comp">Cumulative delta</span>
+            <span class="sig-comp">VWAP</span>
+            <span class="sig-comp">Dual-SuperTrend</span>
+            <span class="sig-comp">Divergences</span>
+            <span class="sig-comp">Liquidity sweeps</span>
+            <span class="sig-comp">Order blocks</span>
+            <span class="sig-comp">FVGs</span>
+            <span class="sig-comp">CPR pivots</span>
+            <span class="sig-comp">MTF alignment</span>
+          </div>
+        </div>
+        <div class="sig-chart-wrap">
+          <canvas data-candles></canvas>
+          <div class="sig-chart-caption">
+            <span>NIFTY · 15m</span>
+            <span>2 signals · both approved</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sig-card">
+        <div class="sig-card-head">
+          <div>
+            <div class="sig-label">02 · Order flow</div>
+            <h3>CDV PRO</h3>
+          </div>
+          <span class="sig-tag">asset-adaptive</span>
+        </div>
+        <div class="sig-card-body">
+          <p>
+            A cumulative-delta-volume engine that reads the balance of buying versus
+            selling pressure bar by bar. Produces a weighted 0–20 order-flow score
+            with graded tiers and an exhaustion measure that flags when a move is
+            running out of participation.
+          </p>
+          <div class="gauge" aria-label="Order-flow score">
+            <span class="gauge-bar on"></span><span class="gauge-bar on"></span>
+            <span class="gauge-bar on"></span><span class="gauge-bar on"></span>
+            <span class="gauge-bar on"></span><span class="gauge-bar on"></span>
+            <span class="gauge-bar on"></span><span class="gauge-bar on"></span>
+            <span class="gauge-bar on"></span><span class="gauge-bar"></span>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:.06em;margin-bottom:14px;">
+            <span class="txt-volt">SCORE 14/20</span> · buying pressure confirmed · exhaustion 0.28
+          </div>
+          <div class="sig-components">
+            <span class="sig-comp">CDV baseline</span>
+            <span class="sig-comp">Session reset</span>
+            <span class="sig-comp">Delta divergence</span>
+            <span class="sig-comp">Exhaustion flag</span>
+            <span class="sig-comp">Volatility bands</span>
+            <span class="sig-comp">Confirming oscillators</span>
+            <span class="sig-comp">Adaptive thresholds</span>
+            <span class="sig-comp">Per-asset tuning</span>
+          </div>
+        </div>
+        <div class="sig-chart-wrap">
+          <canvas data-candles></canvas>
+          <div class="sig-chart-caption">
+            <span>BTCUSD · 5m</span>
+            <span>Delta confirming</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding:20px 24px;background:var(--bg-1);border:1px solid var(--border);border-radius:12px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+      <div style="font-family:var(--font-mono);font-size:12.5px;color:var(--text-2);letter-spacing:0.01em;">
+        <span class="txt-3">Trade rule &nbsp;·&nbsp;</span>
+        <span class="txt-volt">MASTER = A+</span>
+        <span class="txt-3">&nbsp;∧&nbsp;</span>
+        <span class="txt-volt">CDV ≥ 10</span>
+        <span class="txt-3">&nbsp;∧&nbsp;</span>
+        <span class="txt-volt">Macro filter = pass</span>
+        <span class="txt-3">&nbsp;→&nbsp;</span>
+        <span class="txt-up">EXECUTE</span>
+      </div>
+      <div class="pill"><span class="pill-dot"></span>Non-repainting · closed-candle only</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     TRADE LIFECYCLE
+========================================================= -->
+<section class="section" id="lifecycle" style="background: var(--bg-1); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <span class="eyebrow">02 · How a trade flows</span>
+        <h2 class="h-section" style="margin-top:20px;">Deterministic,<br/>end&#8209;to&#8209;end.</h2>
+        <p>
+          Same candles, same configuration, same result — no wall-clock dependence,
+          no randomness. Every signal walks eight gates before it becomes an order,
+          and the risk engine has veto at every step.
+        </p>
+      </div>
+    </div>
+
+    <div class="lc-track">
+      <div class="lc-stage active">
+        <div class="lc-num"><span class="lc-num-dot"></span>01</div>
+        <h4>Data ingest</h4>
+        <p>Market data arrives and is normalised into a canonical bar format.</p>
+      </div>
+      <div class="lc-stage">
+        <div class="lc-num"><span class="lc-num-dot"></span>02</div>
+        <h4>Indicators</h4>
+        <p>MASTER and CDV PRO compute on closed candles only.</p>
+      </div>
+      <div class="lc-stage">
+        <div class="lc-num"><span class="lc-num-dot"></span>03</div>
+        <h4>Confluence</h4>
+        <p>Signals combined into a graded decision with tier and metadata.</p>
+      </div>
+      <div class="lc-stage">
+        <div class="lc-num"><span class="lc-num-dot"></span>04</div>
+        <h4>Macro filter</h4>
+        <p>Volatility regime and macro-bias suppress signals fighting context.</p>
+      </div>
+      <div class="lc-stage">
+        <div class="lc-num"><span class="lc-num-dot"></span>05</div>
+        <h4>Signal object</h4>
+        <p>Immutable object: entry, three take-profits, stop-loss, metadata.</p>
+      </div>
+      <div class="lc-stage">
+        <div class="lc-num"><span class="lc-num-dot"></span>06</div>
+        <h4>Risk sizing</h4>
+        <p>Position size from capital &amp; stop distance. Limits verified.</p>
+      </div>
+      <div class="lc-stage">
+        <div class="lc-num"><span class="lc-num-dot"></span>07</div>
+        <h4>Fan-out</h4>
+        <p>Signal distributed to every eligible account, quantity scaled.</p>
+      </div>
+      <div class="lc-stage">
+        <div class="lc-num"><span class="lc-num-dot"></span>08</div>
+        <h4>Execute &amp; manage</h4>
+        <p>Bracket order placed, staged exits and trailing stop managed to close.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;text-align:center;">
+      <span class="pill" style="border-color:var(--volt);color:var(--volt);">
+        <span class="pill-dot" style="background:var(--volt);box-shadow:0 0 8px var(--volt);"></span>
+        No signal bypasses risk · non-negotiable
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     ARCHITECTURE
+========================================================= -->
+<section class="section" id="architecture">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <span class="eyebrow">03 · Architecture</span>
+        <h2 class="h-section" style="margin-top:20px;">Event-driven services,<br/>on one message bus.</h2>
+        <p>
+          Nine independent services, each owning one responsibility, coordinating
+          over Kafka. Any piece can scale, fail, or be replaced without taking
+          down the rest.
+        </p>
+      </div>
+      <a href="architecture.html" class="btn btn-ghost">Deep dive <span class="btn-arrow">→</span></a>
+    </div>
+
+    <div class="arch-wrap">
+      <svg class="arch-svg" viewBox="0 0 1160 460" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="busGrad" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#E5FF3A" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#E5FF3A" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#E5FF3A" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Top row: Ingest -->
+        <g font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#7A7A85" letter-spacing="1">
+          <text x="60" y="30">MARKET DATA · MACRO</text>
+        </g>
+        <g>
+          <rect x="60" y="45" width="200" height="60" rx="8" fill="#101012" stroke="#23232A"/>
+          <text x="80" y="72" fill="#F5F5F7" font-family="Inter" font-size="14" font-weight="500">Data engine</text>
+          <text x="80" y="90" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5">ingest · normalise</text>
+        </g>
+        <g>
+          <rect x="290" y="45" width="200" height="60" rx="8" fill="#101012" stroke="#23232A"/>
+          <text x="310" y="72" fill="#F5F5F7" font-family="Inter" font-size="14" font-weight="500">Strategy core</text>
+          <text x="310" y="90" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5">MASTER · CDV PRO</text>
+        </g>
+        <g>
+          <rect x="520" y="45" width="200" height="60" rx="8" fill="#101012" stroke="#23232A"/>
+          <text x="540" y="72" fill="#F5F5F7" font-family="Inter" font-size="14" font-weight="500">Risk engine</text>
+          <text x="540" y="90" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5">sizing · limits · CB</text>
+        </g>
+        <g>
+          <rect x="750" y="45" width="200" height="60" rx="8" fill="#101012" stroke="#23232A"/>
+          <text x="770" y="72" fill="#F5F5F7" font-family="Inter" font-size="14" font-weight="500">Account manager</text>
+          <text x="770" y="90" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5">fan-out · scaling</text>
+        </g>
+        <g>
+          <rect x="980" y="45" width="140" height="60" rx="8" fill="#101012" stroke="#23232A"/>
+          <text x="1000" y="72" fill="#F5F5F7" font-family="Inter" font-size="14" font-weight="500">Execution</text>
+          <text x="1000" y="90" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5">OMS · brackets</text>
+        </g>
+
+        <!-- Bus -->
+        <line x1="40" y1="215" x2="1140" y2="215" stroke="#2E2E36" stroke-width="1"/>
+        <line x1="40" y1="220" x2="1140" y2="220" stroke="#2E2E36" stroke-width="1"/>
+        <rect x="40" y="215" width="1100" height="6" fill="url(#busGrad)">
+          <animate attributeName="x" from="-200" to="1140" dur="4s" repeatCount="indefinite"/>
+        </rect>
+        <text x="40" y="205" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5" letter-spacing="1">KAFKA EVENT BUS</text>
+        <text x="1020" y="205" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5" letter-spacing="1">TIMESCALE · REDIS</text>
+
+        <!-- Connectors down from top row -->
+        <g stroke="#23232A" stroke-width="1" stroke-dasharray="3 3">
+          <line x1="160" y1="105" x2="160" y2="215"/>
+          <line x1="390" y1="105" x2="390" y2="215"/>
+          <line x1="620" y1="105" x2="620" y2="215"/>
+          <line x1="850" y1="105" x2="850" y2="215"/>
+          <line x1="1050" y1="105" x2="1050" y2="215"/>
+        </g>
+        <!-- Connectors down to bottom row -->
+        <g stroke="#23232A" stroke-width="1" stroke-dasharray="3 3">
+          <line x1="160" y1="221" x2="160" y2="330"/>
+          <line x1="390" y1="221" x2="390" y2="330"/>
+          <line x1="620" y1="221" x2="620" y2="330"/>
+          <line x1="850" y1="221" x2="850" y2="330"/>
+          <line x1="1050" y1="221" x2="1050" y2="330"/>
+        </g>
+
+        <!-- Bottom row -->
+        <g>
+          <rect x="60" y="330" width="200" height="60" rx="8" fill="#101012" stroke="#23232A"/>
+          <text x="80" y="357" fill="#F5F5F7" font-family="Inter" font-size="14" font-weight="500">Broker gateway</text>
+          <text x="80" y="375" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5">6 broker adapters</text>
+        </g>
+        <g>
+          <rect x="290" y="330" width="200" height="60" rx="8" fill="#101012" stroke="#23232A"/>
+          <text x="310" y="357" fill="#F5F5F7" font-family="Inter" font-size="14" font-weight="500">Dashboard API</text>
+          <text x="310" y="375" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5">FastAPI · WebSocket</text>
+        </g>
+        <g>
+          <rect x="520" y="330" width="200" height="60" rx="8" fill="#101012" stroke="#23232A"/>
+          <text x="540" y="357" fill="#F5F5F7" font-family="Inter" font-size="14" font-weight="500">Analytics</text>
+          <text x="540" y="375" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5">continuous improvement</text>
+        </g>
+        <g>
+          <rect x="750" y="330" width="200" height="60" rx="8" fill="#101012" stroke="#23232A"/>
+          <text x="770" y="357" fill="#F5F5F7" font-family="Inter" font-size="14" font-weight="500">Plugin host</text>
+          <text x="770" y="375" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5">sandboxed · shadow-mode</text>
+        </g>
+        <g>
+          <rect x="980" y="330" width="140" height="60" rx="8" fill="#0A0A0B" stroke="#E5FF3A"/>
+          <text x="1000" y="357" fill="#E5FF3A" font-family="Inter" font-size="14" font-weight="500">Kill switch</text>
+          <text x="1000" y="375" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5">&lt; 3s flatten</text>
+        </g>
+
+        <!-- Bottom label -->
+        <text x="60" y="430" fill="#7A7A85" font-family="'JetBrains Mono', monospace" font-size="10.5" letter-spacing="1">BROKERS · OPERATORS · CONTROL PLANE</text>
+      </svg>
+
+      <div class="arch-stack">
+        <div class="arch-stack-item">
+          <div class="k">TIME-SERIES</div>
+          <div class="v">PostgreSQL + TimescaleDB</div>
+        </div>
+        <div class="arch-stack-item">
+          <div class="k">SHARED STATE</div>
+          <div class="v">Redis</div>
+        </div>
+        <div class="arch-stack-item">
+          <div class="k">EVENT BUS</div>
+          <div class="v">Kafka</div>
+        </div>
+        <div class="arch-stack-item">
+          <div class="k">CONTROL PLANE</div>
+          <div class="v">FastAPI · React · TS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     RISK
+========================================================= -->
+<section class="section" id="risk" style="background: var(--bg-1); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <span class="eyebrow">04 · Risk &amp; safety</span>
+        <h2 class="h-section" style="margin-top:20px;">Fail-closed,<br/>everywhere.</h2>
+        <p>
+          Risk is a first-class subsystem, not an afterthought. Every uncertain
+          state — a broker disconnect, an unclear fill, a stalled feed — resolves
+          to not trading rather than trading blind.
+        </p>
+      </div>
+    </div>
+
+    <div class="risk-grid">
+      <div class="risk-list">
+        <h3 class="h-3" style="margin-bottom:8px;">Controls</h3>
+        <p class="txt-3" style="font-size:13.5px;margin-bottom:20px;">Enforced in every mode, on every order, without exception.</p>
+
+        <div class="risk-item">
+          <div class="risk-item-icon">σ</div>
+          <div>
+            <h4>Position sizing from capital</h4>
+            <p>Size is a function of each account's capital and the entry-to-stop distance — same stop everywhere, only quantity varies.</p>
+          </div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-item-icon">Σ</div>
+          <div>
+            <h4>Portfolio &amp; exposure caps</h4>
+            <p>Aggregate limits verified before every fan-out. Over-limit trades are rejected, not clipped.</p>
+          </div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-item-icon">⊘</div>
+          <div>
+            <h4>Per-account daily-loss circuit breaker</h4>
+            <p>Any account hitting its daily loss limit halts. Others continue independently.</p>
+          </div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-item-icon">!</div>
+          <div>
+            <h4>Fail-closed on uncertainty</h4>
+            <p>Broker disconnected, DB write fails, feed stalls — the system holds fire until the state is provably good.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="kill-panel">
+        <div class="kill-panel-head">
+          <span class="eyebrow" style="color:var(--down)">Emergency stop &nbsp;·&nbsp; live demo</span>
+          <span class="kill-status" id="kill-status">IDLE · all systems green</span>
+        </div>
+
+        <button class="kill-btn" id="kill-btn" type="button">
+          <span class="kill-icon" style="background: var(--down)"></span>
+          <span class="kill-label">Emergency kill switch</span>
+        </button>
+
+        <div class="kill-timer mono" id="kill-timer"></div>
+
+        <div class="kill-positions">
+          <div class="kill-pos"><div class="s">NIFTY 24800</div><div class="p mono">+$3,420</div></div>
+          <div class="kill-pos"><div class="s">RELIANCE</div><div class="p mono">+$1,245</div></div>
+          <div class="kill-pos"><div class="s">BTCUSD</div><div class="p mono">−$680</div></div>
+          <div class="kill-pos"><div class="s">BANKNIFTY</div><div class="p mono">+$5,240</div></div>
+          <div class="kill-pos"><div class="s">TCS</div><div class="p mono">+$890</div></div>
+          <div class="kill-pos"><div class="s">ETHUSD</div><div class="p mono">+$2,110</div></div>
+          <div class="kill-pos"><div class="s">CRUDE FUT</div><div class="p mono">+$1,520</div></div>
+          <div class="kill-pos"><div class="s">HDFCBANK</div><div class="p mono">−$320</div></div>
+          <div class="kill-pos"><div class="s">INFY</div><div class="p mono">+$760</div></div>
+        </div>
+
+        <p class="txt-3" style="font-size:12.5px;margin-top:16px;line-height:1.5;">
+          Triggered from dashboard (two-step, 2FA), Telegram, or automatically on a
+          daily-loss breach. Flattens all positions, halts all new signals, stays halted
+          until a human restarts. Tested at &lt; 3 s across multiple accounts.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     DASHBOARD PREVIEW
+========================================================= -->
+<section class="section" id="dashboard">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <span class="eyebrow">05 · Operator cockpit</span>
+        <h2 class="h-section" style="margin-top:20px;">One screen for<br/>every account.</h2>
+        <p>
+          A React cockpit with six views — live positions, strategy, risk,
+          accounts, analytics, and system health. Config edits take effect
+          immediately. Execution-affecting actions gated by 2FA.
+        </p>
+      </div>
+    </div>
+
+    <div class="dash">
+      <div class="dash-head">
+        <div class="dash-tabs">
+          <span class="dash-tab active">Live</span>
+          <span class="dash-tab">Strategy</span>
+          <span class="dash-tab">Risk</span>
+          <span class="dash-tab">Accounts</span>
+          <span class="dash-tab">Analytics</span>
+          <span class="dash-tab">System</span>
+        </div>
+        <div style="display:flex;gap:16px;align-items:center;">
+          <span class="pill"><span class="pill-dot"></span>4 accounts live</span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.05em;">14:22:07 IST</span>
+        </div>
+      </div>
+
+      <div class="dash-body">
+        <div class="dash-cell">
+          <div class="k">Net P&amp;L today</div>
+          <div class="v up">+$18,240</div>
+          <div class="sub">4 accounts · consolidated</div>
+        </div>
+        <div class="dash-cell">
+          <div class="k">Open positions</div>
+          <div class="v volt">9</div>
+          <div class="sub">across 4 accounts · 3 assets</div>
+        </div>
+        <div class="dash-cell">
+          <div class="k">Signals today</div>
+          <div class="v">14</div>
+          <div class="sub">11 approved · 3 filtered</div>
+        </div>
+      </div>
+
+      <div class="dash-positions">
+        <div class="dash-positions-head">
+          <span>Symbol</span>
+          <span>Side</span>
+          <span>Entry</span>
+          <span>Mark</span>
+          <span>P&amp;L</span>
+          <span>Tier</span>
+        </div>
+        <div class="dash-pos-row">
+          <span class="dash-pos-sym">NIFTY 24800 CE</span>
+          <span class="txt-up">LONG</span>
+          <span>142.30</span>
+          <span>168.10</span>
+          <span class="txt-up">+$3,870</span>
+          <span><span class="dash-pos-tier a-plus">A+</span></span>
+        </div>
+        <div class="dash-pos-row">
+          <span class="dash-pos-sym">RELIANCE</span>
+          <span class="txt-up">LONG</span>
+          <span>2,952.10</span>
+          <span>2,984.75</span>
+          <span class="txt-up">+$1,245</span>
+          <span><span class="dash-pos-tier">A</span></span>
+        </div>
+        <div class="dash-pos-row">
+          <span class="dash-pos-sym">BTCUSD</span>
+          <span class="txt-down">SHORT</span>
+          <span>67,890</span>
+          <span>67,210</span>
+          <span class="txt-up">+$2,240</span>
+          <span><span class="dash-pos-tier">A</span></span>
+        </div>
+        <div class="dash-pos-row">
+          <span class="dash-pos-sym">BANKNIFTY FUT</span>
+          <span class="txt-up">LONG</span>
+          <span>50,980</span>
+          <span>51,204</span>
+          <span class="txt-up">+$5,240</span>
+          <span><span class="dash-pos-tier a-plus">A+</span></span>
+        </div>
+        <div class="dash-pos-row">
+          <span class="dash-pos-sym">TCS</span>
+          <span class="txt-up">LONG</span>
+          <span>4,092.50</span>
+          <span>4,128.90</span>
+          <span class="txt-up">+$890</span>
+          <span><span class="dash-pos-tier">A</span></span>
+        </div>
+        <div class="dash-pos-row">
+          <span class="dash-pos-sym">CRUDE FUT</span>
+          <span class="txt-down">SHORT</span>
+          <span>78.62</span>
+          <span>78.14</span>
+          <span class="txt-up">+$1,520</span>
+          <span><span class="dash-pos-tier">B</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     MULTI-ACCOUNT / MULTI-ASSET
+========================================================= -->
+<section class="section" id="reach" style="background: var(--bg-1); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="wrap">
+    <div class="assets-layout">
+      <div>
+        <span class="eyebrow">06 · Multi-asset · multi-account</span>
+        <h2 class="h-section" style="margin-top:20px;">Seven asset classes.<br/>Six brokers.<br/>One signal object.</h2>
+        <p class="txt-2" style="margin-top:20px;font-size:16px;max-width:52ch;">
+          A single approved signal fans out in parallel to every eligible
+          account, quantity scaled to each account's capital. Adding a broker
+          account is a single database row — no code change, no redeploy.
+        </p>
+
+        <div class="brokers">
+          <div class="brokers-label">Broker adapters</div>
+          <div class="brokers-list">
+            <span class="broker primary">Zerodha · primary</span>
+            <span class="broker">Upstox</span>
+            <span class="broker">Angel One</span>
+            <span class="broker">Interactive Brokers</span>
+            <span class="broker">Binance</span>
+            <span class="broker">MetaTrader</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="assets-grid">
+        <div class="asset-cell">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 20h18M5 20V10M9 20V6M13 20v-8M17 20V4M21 20v-6"/></svg>
+          <div class="l">EQUITIES</div>
+        </div>
+        <div class="asset-cell">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16v16H4z"/><path d="M4 12h16M12 4v16"/></svg>
+          <div class="l">FUTURES</div>
+        </div>
+        <div class="asset-cell">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></svg>
+          <div class="l">OPTIONS</div>
+        </div>
+        <div class="asset-cell">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8h16M4 16h16"/><path d="M8 4v16M16 4v16"/></svg>
+          <div class="l">CURRENCIES</div>
+        </div>
+        <div class="asset-cell">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20L10 8l4 6 6-10"/><path d="M14 4h6v6"/></svg>
+          <div class="l">COMMODITIES</div>
+        </div>
+        <div class="asset-cell">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 6h6a4 4 0 010 8H8V6zM8 14h7a4 4 0 010 8H8v-8zM10 2v4M14 2v4M10 22v-4M14 22v-4"/></svg>
+          <div class="l">CRYPTO</div>
+        </div>
+        <div class="asset-cell">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>
+          <div class="l">INDICES</div>
+        </div>
+        <div class="asset-cell" style="border-color:var(--volt);">
+          <div style="font-family:var(--font-mono);font-size:22px;color:var(--volt);letter-spacing:-0.02em;line-height:1;">+1</div>
+          <div class="l" style="color:var(--volt);">PLUGIN SLOT</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     OPERATING MODES
+========================================================= -->
+<section class="section" id="modes">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <span class="eyebrow">07 · Operating modes</span>
+        <h2 class="h-section" style="margin-top:20px;">Four gears.<br/>Selectable per account.</h2>
+        <p>
+          The recommended path to going live is to start in semi-automatic on a
+          single account and asset class, then graduate to automatic only after
+          the system has proven itself with real money under supervision.
+        </p>
+      </div>
+    </div>
+
+    <div class="modes">
+      <div class="mode">
+        <div class="mode-num">01 · PAPER</div>
+        <div class="mode-name">Paper</div>
+        <p>Full pipeline runs against real market data but places simulated orders. No capital at risk.</p>
+        <div class="mode-safety"><span class="dot g"></span>Currently active</div>
+      </div>
+      <div class="mode">
+        <div class="mode-num">02 · MANUAL</div>
+        <div class="mode-name">Manual</div>
+        <p>Signals generated and surfaced. A human places every order.</p>
+        <div class="mode-safety"><span class="dot g"></span>Zero automation risk</div>
+      </div>
+      <div class="mode rec">
+        <div class="mode-num">03 · SEMI-AUTO</div>
+        <div class="mode-name">Semi-automatic</div>
+        <p>System prepares each trade and waits for a human to approve or reject via dashboard or Telegram before executing.</p>
+        <div class="mode-safety"><span class="dot y"></span>Recommended first live step</div>
+      </div>
+      <div class="mode">
+        <div class="mode-num">04 · AUTO</div>
+        <div class="mode-name">Automatic</div>
+        <p>Approved signals execute hands-free, end to end. Reached only after supervised proof.</p>
+        <div class="mode-safety"><span class="dot r"></span>Highest trust threshold</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     ROADMAP / STATUS
+========================================================= -->
+<section class="section" id="roadmap" style="background: var(--bg-1); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <span class="eyebrow">08 · Where we are</span>
+        <h2 class="h-section" style="margin-top:20px;">Built. Verified.<br/>Ready to go live<br/>on human approval.</h2>
+        <p>
+          Every planned milestone of the build is complete and paper-verified.
+          Going live with real capital is intentionally a NO-GO until an
+          operator explicitly approves it — a deliberately human decision
+          against a go/no-go readiness report.
+        </p>
+      </div>
+    </div>
+
+    <div class="roadmap">
+      <div class="rm-track"></div>
+      <div class="rm-track-active" style="width: calc(50% - 20px);"></div>
+      <div class="rm-items">
+        <div class="rm-item done">
+          <div class="stage">STAGE 01</div>
+          <div class="dot"></div>
+          <div class="lbl">Indicators ported &amp; parity-validated</div>
+        </div>
+        <div class="rm-item done">
+          <div class="stage">STAGE 02</div>
+          <div class="dot"></div>
+          <div class="lbl">Trading engine · risk · execution · dashboard</div>
+        </div>
+        <div class="rm-item current">
+          <div class="stage">YOU ARE HERE</div>
+          <div class="dot"></div>
+          <div class="lbl">Paper-verified · 105 trades · 189 backtest trades reconciled</div>
+        </div>
+        <div class="rm-item">
+          <div class="stage">STAGE 04</div>
+          <div class="dot"></div>
+          <div class="lbl">Live-connect drill · broker APIs · kill-switch rehearsal</div>
+        </div>
+        <div class="rm-item">
+          <div class="stage">STAGE 05</div>
+          <div class="dot"></div>
+          <div class="lbl">Small-capital live · one account · semi-automatic</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:60px;padding:24px 28px;background:var(--bg-2);border:1px solid var(--border);border-radius:12px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.1em;margin-bottom:8px;">GO / NO-GO</div>
+        <div style="font-size:16px;letter-spacing:-0.01em;">Live trading with real capital is a NO-GO until a human approves it against the readiness report.</div>
+      </div>
+      <span class="pill" style="border-color:var(--volt);color:var(--volt);">
+        <span class="pill-dot" style="background:var(--volt);box-shadow:0 0 8px var(--volt);"></span>
+        Deliberate, not automated
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     TECH STACK
+========================================================= -->
+<section class="section" id="tech">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <span class="eyebrow">09 · Tech stack</span>
+        <h2 class="h-section" style="margin-top:20px;">Boring on purpose.</h2>
+        <p>Tools chosen for reliability, not novelty. Nothing in the critical path is speculative.</p>
+      </div>
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech"><div class="k">BACKEND</div><div class="v">Python · FastAPI</div></div>
+      <div class="tech"><div class="k">TIME-SERIES</div><div class="v">PostgreSQL · TimescaleDB</div></div>
+      <div class="tech"><div class="k">SHARED STATE</div><div class="v">Redis</div></div>
+      <div class="tech"><div class="k">EVENT BUS</div><div class="v">Kafka</div></div>
+      <div class="tech"><div class="k">DASHBOARD</div><div class="v">React · TypeScript · Tailwind</div></div>
+      <div class="tech"><div class="k">PACKAGING</div><div class="v">Docker</div></div>
+      <div class="tech"><div class="k">SECRETS</div><div class="v">Managed store · never in code</div></div>
+      <div class="tech"><div class="k">ACCESS</div><div class="v">RBAC · 2FA on sensitive actions</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     ABOUT
+========================================================= -->
+<section class="section" id="about" style="background: var(--bg-1); border-top:1px solid var(--border);">
+  <div class="wrap about">
+    <div>
+      <span class="eyebrow">10 · About Datareco</span>
+      <h2 class="h-section" style="margin-top:20px;">We build the plumbing<br/>between quant ideas<br/>and real capital.</h2>
+    </div>
+    <div>
+      <p class="body-lg" style="margin-bottom:24px;">
+        Datareco builds production data and execution infrastructure for
+        systematic trading. VoltaEdge Algo is our flagship product — a full
+        trade lifecycle in a single deployable, wrapping a discretionary
+        trader's real intuition in institutional-grade guardrails.
+      </p>
+      <p class="body-lg" style="margin-bottom:24px;">
+        We do not build signals we do not understand. We do not deploy code we
+        cannot roll back. And we do not go live with real money without a human
+        pulling the go/no-go trigger.
+      </p>
+      <div style="display:flex;gap:32px;margin-top:32px;padding-top:24px;border-top:1px solid var(--border);">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.1em;margin-bottom:6px;">FOUNDED</div>
+          <div style="font-size:16px;">2024</div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.1em;margin-bottom:6px;">BASED</div>
+          <div style="font-size:16px;">Bengaluru</div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.1em;margin-bottom:6px;">FOCUS</div>
+          <div style="font-size:16px;">Systematic trading infra</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     FAQ
+========================================================= -->
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="sec-head" style="text-align:center;flex-direction:column;align-items:center;">
+      <div class="sec-head-left" style="text-align:center;">
+        <span class="eyebrow">11 · Questions</span>
+        <h2 class="h-section" style="margin: 20px auto 0;">Straight answers.</h2>
+      </div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-item">
+        <button class="faq-q">Is this a signal-alert tool or a full trading system?</button>
+        <div class="faq-a">
+          <p style="padding-top:4px;">Neither a signal-alert tool nor a backtesting notebook — it's a complete trade lifecycle. Market data in, signals generated, risk checked, orders executed and managed, P&amp;L reconciled, all observable and controllable from an operator dashboard, with an emergency stop that flattens every position in every account in seconds.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Does it use machine learning?</button>
+        <div class="faq-a">
+          <p style="padding-top:4px;">Not in v1, by design. The intelligence is two deterministic technical indicators. What is built is the <em>framework</em> for AI — a plugin system with sandboxing and shadow-mode evaluation, proven with a placeholder plugin — but the ML classifier, news-sentiment model, and order-flow-imbalance model are explicitly future scope. Hooks ready, models not built.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What does "non-repainting" actually mean here?</button>
+        <div class="faq-a">
+          <p style="padding-top:4px;">Signals are computed only on closed candles. Once fired, a signal never changes retroactively. That's stricter than the source TradingView indicators, which update intrabar. We trade slightly more conservative timing for the guarantee that the system never acts on something that later vanishes.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How is a trade sized across multiple accounts?</button>
+        <div class="faq-a">
+          <p style="padding-top:4px;">One approved signal fans out in parallel to every eligible account. The stop distance is the same everywhere; the position size is scaled to each account's own capital. Accounts too small to take a valid position are skipped automatically.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What actually happens when the kill switch fires?</button>
+        <div class="faq-a">
+          <p style="padding-top:4px;">All open positions are flattened via market orders across every account. All new signal processing halts. The system stays halted until a human manually restarts it. Tested at under three seconds across multiple accounts. Triggered via dashboard (two-step, 2FA), Telegram, or automatically on a daily-loss breach.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Which brokers are supported?</button>
+        <div class="faq-a">
+          <p style="padding-top:4px;">Zerodha as the primary adapter, plus Upstox, Angel One, Interactive Brokers, Binance, and MetaTrader. Adding another broker is a single adapter behind a stable gateway interface — the strategy code doesn't change.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is anyone trading real money on this today?</button>
+        <div class="faq-a">
+          <p style="padding-top:4px;">No. Every planned milestone is complete and paper-verified — a 105-trade multi-asset paper run with dollar-level reconciliation, a 189-trade six-month backtest matching manual P&amp;L with zero deviation, 268 tests passing. Live trading with real capital is intentionally a NO-GO until an operator explicitly approves it against a readiness report. That final decision is deliberately a human one.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     CONTACT
+========================================================= -->
+<section class="section" id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <div>
+        <span class="eyebrow">12 · Get started</span>
+        <h2 class="h-section" style="margin-top:20px;">Book a demo,<br/>or request pilot access.</h2>
+        <p class="txt-2" style="margin-top:20px;font-size:15px;max-width:44ch;">
+          We're onboarding a small cohort of pilot partners ahead of live capital
+          rollout. Tell us a little about your setup and we'll come back within 48 hours.
+        </p>
+      </div>
+
+      <form class="contact-form" id="contact-form" data-contact-endpoint="https://datareco-contact.naveen-178.workers.dev">
+        <div>
+          <label>Name</label>
+          <input type="text" name="name" placeholder="Full name" required />
+        </div>
+        <div>
+          <label>Work email</label>
+          <input type="email" name="email" placeholder="you@firm.com" required />
+        </div>
+        <div>
+          <label>Organisation</label>
+          <input type="text" name="organisation" placeholder="Firm or fund name" />
+        </div>
+        <div>
+          <label>Interest</label>
+          <select name="interest">
+            <option>Book a demo</option>
+            <option>Pilot access</option>
+            <option>Partnership / integration</option>
+            <option>Investor introduction</option>
+          </select>
+        </div>
+        <div>
+          <label>Notes</label>
+          <textarea name="notes" placeholder="AUM, asset classes, current stack, timeline…"></textarea>
+        </div>
+        <p id="contact-feedback" class="txt-2" role="status" aria-live="polite" style="min-height:20px;font-size:13.5px;"></p>
+        <button type="submit" class="btn btn-primary" style="justify-content:center;margin-top:8px;">
+          Send request <span class="btn-arrow">→</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="nav-brand" href="index.html">
+          <span class="nav-brand-parent">datareco</span>
+          <span class="nav-brand-sep">/</span>
+          <span class="nav-brand-product">
+            <svg width="14" height="14" viewBox="0 0 32 32" style="margin-right:2px"><path d="M18 2L10 16H15L14 30L22 16H17L18 2Z" fill="#E5FF3A"/></svg>
+            VoltaEdge Algo
+          </span>
+        </a>
+        <p>Production data and execution infrastructure for systematic trading. Built for capital, not for demos.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Product</h5>
+        <a href="#engine">Signal engine</a>
+        <a href="#lifecycle">Trade lifecycle</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#risk">Risk &amp; safety</a>
+        <a href="#dashboard">Dashboard</a>
+      </div>
+      <div class="footer-col">
+        <h5>Deep dives</h5>
+        <a href="signal-engine.html">Signal engine</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="#about">About Datareco</a>
+        <a href="mailto:support@datareco.com">support@datareco.com</a>
+        <a href="#contact">Book a demo</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Datareco. VoltaEdge Algo is not investment advice. Trading involves risk of capital loss.</div>
+      <div><a href="mailto:support@datareco.com" style="color: var(--text-3);">support@datareco.com</a></div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
